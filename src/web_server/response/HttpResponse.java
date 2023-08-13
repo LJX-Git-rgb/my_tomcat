@@ -1,4 +1,6 @@
-package web_server;
+package web_server.response;
+
+import web_server.request.HttpRequest;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
@@ -10,12 +12,12 @@ import java.util.Locale;
  */
 public class HttpResponse implements ServletResponse {
 	private final HttpRequest request;
-	private final OutputStream output;
+	private final ResponseOutStream output;
 	private PrintWriter writer;
 
 	public HttpResponse(HttpRequest request, OutputStream output) {
 		this.request = request;
-		this.output = output;
+		this.output = new ResponseOutStream(output);
 	}
 
 	@Override public String getCharacterEncoding() {
@@ -27,7 +29,7 @@ public class HttpResponse implements ServletResponse {
 	}
 
 	@Override public ServletOutputStream getOutputStream() throws IOException {
-		return null;
+		return output;
 	}
 
 	@Override public PrintWriter getWriter() {

@@ -1,4 +1,4 @@
-package web_server;
+package web_server.request;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
@@ -11,19 +11,18 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author JasonLiu
  */
 public class HttpRequest implements ServletRequest {
 	private final InputStream input;
-	private final Map<String, String> requestMap;
-	private final Map<String, String> requestParamMap;
+	private final Map<String, String> requestMap = new HashMap<>();
+	private final Map<String, String> requestParamMap = new HashMap<>();
 
 	public HttpRequest(InputStream input) {
 		this.input = input;
-		this.requestMap = new HashMap<>();
-		this.requestParamMap = new HashMap<>();
 	}
 
 	public HttpRequest parse() {
@@ -48,6 +47,10 @@ public class HttpRequest implements ServletRequest {
 		}
 
 		String[] requestHeader = requestArr[0].split(" ");
+		if (requestHeader.length < 3) {
+			System.out.println(requestStr);
+			return this;
+		}
 		String[] url = requestHeader[1].split("\\?");
 		requestMap.put("method", requestHeader[0]);
 		requestMap.put("uri", url[0]);
@@ -56,7 +59,6 @@ public class HttpRequest implements ServletRequest {
 		if (url.length > 1) {
 			String[] params = url[1].split("=");
 			requestParamMap.put(params[0], params[1]);
-		} else if (requestMap.get("method").equals("POST")) {
 		}
 
 		return this;
@@ -96,19 +98,19 @@ public class HttpRequest implements ServletRequest {
 	}
 
 	@Override public String getParameter(String s) {
-		return null;
+		return requestParamMap.get(s);
 	}
 
 	@Override public Enumeration getParameterNames() {
-		return null;
+		return (Enumeration) requestParamMap.keySet().stream().collect(Collectors.toList());
 	}
 
 	@Override public String[] getParameterValues(String s) {
-		return new String[0];
+		return requestParamMap.values().toArray(new String[0]);
 	}
 
-	@Override public Map getParameterMap() {
-		return null;
+	@Override public Map<String, String> getParameterMap() {
+		return requestParamMap;
 	}
 
 	@Override public String getProtocol() {

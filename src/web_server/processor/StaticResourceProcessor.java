@@ -1,9 +1,14 @@
-package web_server;
+package web_server.processor;
 
+import web_server.Constants;
+import web_server.request.HttpRequest;
+import web_server.response.HttpResponse;
+
+import javax.servlet.ServletOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author JasonLiu
@@ -24,23 +29,23 @@ public class StaticResourceProcessor {
 	}
 
 	public void sendStaticResource() throws IOException {
-		PrintWriter writer = response.getWriter();
+		ServletOutputStream writer = response.getOutputStream();
 		FileInputStream fileInputStream = null;
 		try {
 			File file = new File(Constants.WEB_ROOT, request.getUri());
 			if (file.exists()) {
 				String responseHeader =
 						"HTTP/1.1 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n";
-				writer.write(responseHeader);
+				writer.write(responseHeader.getBytes(StandardCharsets.UTF_8));
 
 				fileInputStream = new FileInputStream(file);
 				byte[] bytes = fileInputStream.readAllBytes();
-				writer.write(new String(bytes));
+				writer.write(bytes);
 			} else {
 				writer.write(
-						"HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
-								+ "Content-Length: 23\r\n" + "\r\n"
-								+ "<h1>File Not Found</h1>");
+						("HTTP/1.1 404 File Not Found\r\n" + "Content-Type: text/html\r\n"
+								+ "Content-Length: 23\r\n" + "\r\n" + "<h1>File Not Found</h1>")
+								.getBytes(StandardCharsets.UTF_8));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
