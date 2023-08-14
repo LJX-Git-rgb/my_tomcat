@@ -13,12 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpProcessor {
-  private HttpConnector httpConnector;
-
-  public HttpProcessor(HttpConnector httpConnector) {
-    this.httpConnector = httpConnector;
-  }
-
   public void process(Socket socket) {
     InputStream input = null;
     OutputStream output = null;

@@ -7,15 +7,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class HttpConnector implements Runnable {
-  private boolean stoped = false;
-
+public class HttpConnector {
   public void start() {
-    Thread thread = new Thread(this);
-    thread.start();
-  }
-
-  @Override public void run() {
     ServerSocket serverSocket = null;
     int port = 8080;
     try {
@@ -26,19 +19,31 @@ public class HttpConnector implements Runnable {
       System.exit(1);
     }
 
-    while (!stoped) {
+    while (true) {
       Socket socket;
       try {
         socket = serverSocket.accept();
       } catch (Exception e) {
         continue;
       }
-      HttpProcessor processor = new HttpProcessor(this);
-      processor.process(socket);
+      new Thread(new connection(socket)).start();
     }
   }
 
   public String getScheme() {
     return "http";
+  }
+}
+
+class connection implements Runnable {
+  private final Socket socket;
+
+  public connection(Socket socket) {
+    this.socket = socket;
+  }
+
+  @Override public void run() {
+    HttpProcessor processor = new HttpProcessor();
+    processor.process(socket);
   }
 }
