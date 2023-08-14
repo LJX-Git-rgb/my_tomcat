@@ -1,4 +1,4 @@
-package web_server.response;
+package response;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;

@@ -1,8 +1,7 @@
-package web_server.processor;
+package processor;
 
-import web_server.Constants;
-import web_server.request.HttpRequest;
-import web_server.response.HttpResponse;
+import request.HttpRequest;
+import response.HttpResponse;
 
 import javax.servlet.ServletOutputStream;
 import java.io.File;
@@ -32,7 +31,9 @@ public class StaticResourceProcessor {
 		ServletOutputStream writer = response.getOutputStream();
 		FileInputStream fileInputStream = null;
 		try {
-			File file = new File(Constants.WEB_ROOT, request.getUri());
+			File file = new File(
+					System.getProperty("user.dir") + File.separator + "webroot",
+					request.getRequestURI());
 			if (file.exists()) {
 				String responseHeader =
 						"HTTP/1.1 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n";

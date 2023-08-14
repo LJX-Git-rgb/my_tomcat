@@ -1,4 +1,4 @@
-import web_server.connector.HttpConnector;
+import connector.HttpConnector;
 
 public class Bootstrap {
   public static void main(String[] args) {

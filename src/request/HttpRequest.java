@@ -1,4 +1,4 @@
-package web_server.request;
+package request;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
@@ -17,54 +17,16 @@ import java.util.stream.Collectors;
  * @author JasonLiu
  */
 public class HttpRequest implements ServletRequest {
-	private final InputStream input;
 	private final Map<String, String> requestMap = new HashMap<>();
-	private final Map<String, String> requestParamMap = new HashMap<>();
+	private final Map<String, String> parameterMap = new HashMap<>();
 
-	public HttpRequest(InputStream input) {
-		this.input = input;
+	public HttpRequest(Map<String, String> requestMap,
+			Map<String, String> parameterMap) {
+		this.requestMap.putAll(requestMap);
+		this.parameterMap.putAll(parameterMap);
 	}
 
-	public HttpRequest parse() {
-		StringBuilder stringBuilder = new StringBuilder(2048);
-		int length;
-		byte[] buffer = new byte[2048];
-		try {
-			length = input.read(buffer);
-		} catch (IOException e) {
-			e.printStackTrace();
-			length = -1;
-		}
-		for (int j = 0; j < length; j++) {
-			stringBuilder.append((char) buffer[j]);
-		}
-
-		String requestStr = stringBuilder.toString();
-		String[] requestArr = requestStr.split("\r\n");
-		for (int i = 1; i < requestArr.length; i++) {
-			String[] requestBody = requestArr[i].split(":");
-			requestMap.put(requestBody[0], requestBody[1]);
-		}
-
-		String[] requestHeader = requestArr[0].split(" ");
-		if (requestHeader.length < 3) {
-			System.out.println(requestStr);
-			return this;
-		}
-		String[] url = requestHeader[1].split("\\?");
-		requestMap.put("method", requestHeader[0]);
-		requestMap.put("uri", url[0]);
-		requestMap.put("protocol", requestHeader[2]);
-
-		if (url.length > 1) {
-			String[] params = url[1].split("=");
-			requestParamMap.put(params[0], params[1]);
-		}
-
-		return this;
-	}
-
-	public String getUri() {
+	public String getRequestURI() {
 		return requestMap.get("uri");
 	}
 
@@ -98,19 +60,20 @@ public class HttpRequest implements ServletRequest {
 	}
 
 	@Override public String getParameter(String s) {
-		return requestParamMap.get(s);
+		return parameterMap.get(s);
 	}
 
 	@Override public Enumeration getParameterNames() {
-		return (Enumeration) requestParamMap.keySet().stream().collect(Collectors.toList());
+		return (Enumeration) parameterMap.keySet().stream()
+				.collect(Collectors.toList());
 	}
 
 	@Override public String[] getParameterValues(String s) {
-		return requestParamMap.values().toArray(new String[0]);
+		return parameterMap.values().toArray(new String[0]);
 	}
 
 	@Override public Map<String, String> getParameterMap() {
-		return requestParamMap;
+		return parameterMap;
 	}
 
 	@Override public String getProtocol() {

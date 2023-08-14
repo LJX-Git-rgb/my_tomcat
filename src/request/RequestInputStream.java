@@ -1,10 +1,8 @@
-package web_server.request;
+package request;
 
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class RequestInputStream extends ServletInputStream {
   private final InputStream input;

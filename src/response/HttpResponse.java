@@ -1,6 +1,6 @@
-package web_server.response;
+package response;
 
-import web_server.request.HttpRequest;
+import request.HttpRequest;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;
@@ -79,5 +79,9 @@ public class HttpResponse implements ServletResponse {
 
 	@Override public Locale getLocale() {
 		return null;
+	}
+
+	public void setHeader(String name, String value) {
+//		output.setHeader(name, value);
 	}
 }

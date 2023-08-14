@@ -1,24 +1,14 @@
-package web_server.connector;
+package connector;
 
-import web_server.processor.HttpProcessor;
-import web_server.processor.ServletProcessor;
-import web_server.processor.StaticResourceProcessor;
-import web_server.request.HttpRequest;
-import web_server.response.HttpResponse;
+import processor.HttpProcessor;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HttpConnector implements Runnable {
-  boolean stoped = false;
-
-  public String getScheme() {
-    return "http";
-  }
+  private boolean stoped = false;
 
   public void start() {
     Thread thread = new Thread(this);
@@ -35,15 +25,21 @@ public class HttpConnector implements Runnable {
       e.printStackTrace();
       System.exit(1);
     }
+
     while (!stoped) {
-      Socket socket = null;
+      Socket socket;
       try {
         socket = serverSocket.accept();
       } catch (Exception e) {
         continue;
       }
-      HttpProcessor processor = new HttpProcessor();
+      HttpProcessor processor = new HttpProcessor(this);
       processor.process(socket);
     }
   }
+
+  public String getScheme() {
+    return "http";
+  }
+
 }
