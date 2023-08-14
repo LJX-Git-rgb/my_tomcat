@@ -41,5 +41,4 @@ public class HttpConnector implements Runnable {
   public String getScheme() {
     return "http";
   }
-
 }

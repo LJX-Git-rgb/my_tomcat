@@ -2,7 +2,7 @@ package servlet;
 
 import javax.servlet.*;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 public class PrimitiveServlet implements Servlet {
 	@Override public void init(ServletConfig config) {
@@ -11,7 +11,11 @@ public class PrimitiveServlet implements Servlet {
 
 	@Override public void service(ServletRequest request,
 			ServletResponse response) throws IOException {
-		System.out.println("service");
+		ServletOutputStream outputStream = response.getOutputStream();
+		String responseHeader =
+				"HTTP/1.1 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+		outputStream.write(responseHeader.getBytes(StandardCharsets.UTF_8));
+		outputStream.print("Hello. Roses are red.");
 	}
 
 	@Override public void destroy() {
