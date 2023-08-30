@@ -1,6 +1,5 @@
 package processor;
 
-import connector.HttpConnector;
 import request.HttpRequest;
 import response.HttpResponse;
 
@@ -14,25 +13,36 @@ import java.util.Map;
 
 public class HttpProcessor {
   public void process(Socket socket) {
-    InputStream input = null;
-    OutputStream output = null;
+    InputStream input;
+    OutputStream output;
+    HttpRequest request;
     try {
       input = socket.getInputStream();
       output = socket.getOutputStream();
-
-      HttpRequest request = parseRequest(input);
-      HttpResponse response = new HttpResponse(request, output);
-
-      response.setHeader("Server", "Pyrmont Servlet Container");
-      if (request.getRequestURI().startsWith("/servlet/")) {
-        ServletProcessor processor = new ServletProcessor();
-        processor.process(request, response);
-      } else {
-        StaticResourceProcessor processor = new StaticResourceProcessor();
-        processor.process(request, response);
-      }
-      socket.close();
+      request = parseRequest(input);
     } catch (Exception e) {
+      try {
+        socket.close();
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
+      e.printStackTrace();
+      return;
+    }
+
+    HttpResponse response = new HttpResponse(request, output);
+    response.setHeader("Server", "Pyrmont Servlet Container");
+    if (request.getRequestURI().startsWith("/servlet/")) {
+      ServletProcessor processor = new ServletProcessor();
+      processor.process(request, response);
+    } else {
+      StaticResourceProcessor processor = new StaticResourceProcessor();
+      processor.process(request, response);
+    }
+
+    try {
+      socket.close();
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -79,7 +89,6 @@ public class HttpProcessor {
       stringBuilder.append((char) buffer[j]);
     }
 
-    System.out.println(stringBuilder.toString());
     return stringBuilder.toString();
   }
 }

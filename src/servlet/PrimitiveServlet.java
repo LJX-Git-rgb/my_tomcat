@@ -14,11 +14,6 @@ public class PrimitiveServlet implements Servlet {
 
 	@Override public void service(ServletRequest request,
 			ServletResponse response) throws IOException {
-		try {
-			TimeUnit.SECONDS.sleep(5);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		ServletOutputStream outputStream = response.getOutputStream();
 		String responseHeader =
 				"HTTP/1.1 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n";
