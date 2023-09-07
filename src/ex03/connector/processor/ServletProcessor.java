@@ -24,6 +24,7 @@ public class ServletProcessor {
 			Object o = Class.forName(servletPath).getConstructor().newInstance();
 			Servlet servlet = (Servlet) o;
 			servlet.service(new RequestFacade(request), new ResponseFacade(response));
+			response.finishResponse();
 		} catch (ClassNotFoundException | ServletException | IOException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
